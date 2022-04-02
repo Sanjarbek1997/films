@@ -1,6 +1,11 @@
+
+
 var elList = document.querySelector(".list");
+var elListTitle = document.querySelector(".list-title");
 var elSelect = document.querySelector(".form-select");
 var elForm = document.querySelector(".form");
+
+const bookmarkArr = [];
 
 function formatDate(format) {
   var date = new Date(format);
@@ -36,36 +41,36 @@ let renderFilms = (arr, element) => {
     let elBody = document.createElement("div");
     let elTitle = document.createElement("h3");
     let elText = document.createElement("p");
-    let elTextGenres = document.createElement("p");
-    let elText2 = document.createElement("p");
+    let elBtn = document.createElement("button");
+    let elBtnDiv = document.createElement("div");
 
     elImg.setAttribute("src", film.poster);
     elTitle.textContent = film.title;
-    elTextGenres.textContent = `Genres: ${film.genres}`;
     elText.textContent = `Weaknesses: ${film.overview
       .split(" ")
       .slice(0, 15)
       .join(" ")}`;
-    elText2.textContent = formatDate(film.release_date);
 
-    elItem.setAttribute("class", "text-danger card col-3 bg-info p-0");
+    elItem.setAttribute("class", " card col-4 bg-info p-0 m-2");
 
-    elText2.setAttribute("class", " card-text");
     elText.setAttribute("class", " card-text");
-    elImg.setAttribute("class", " bg-white card-img-top ");
+    elImg.setAttribute("class", " bg-white card-img-top card__img");
     elTitle.setAttribute("class", "card-title");
-    elBody.setAttribute("class", "card-body text-center ");
+    elBody.setAttribute("class", "card-body  title__body ");
+    elBtn.setAttribute("class", "btn btn-danger list__btn");
+    elBtn.href = "#";
+    elBtn.textContent = "Bookmark";
+    elBtnDiv.setAttribute("class", "text-end ");
+    elBtn.dataset.filmId = film.id;
 
-    // elTwoBody.appendChild(elText2);
+    elBtnDiv.appendChild(elBtn);
+
     elBody.appendChild(elTitle);
     elBody.appendChild(elText);
-    elBody.appendChild(elText2);
-
-    elBody.appendChild(elTextGenres);
+    elBody.appendChild(elBtnDiv);
 
     elItem.appendChild(elImg);
     elItem.appendChild(elBody);
-    // elItem.appendChild(elTwoBody);
 
     element.appendChild(elItem);
   }
@@ -78,49 +83,101 @@ let renderFilms2 = (arr, element, genre) => {
       let elBody = document.createElement("div");
       let elTitle = document.createElement("h3");
       let elText = document.createElement("p");
-      let elTextGenres = document.createElement("p");
-      let elText2 = document.createElement("p");
+      let elBtn = document.createElement("button");
+      let elBtnDiv = document.createElement("div");
 
       elImg.setAttribute("src", film.poster);
       elTitle.textContent = film.title;
-      elTextGenres.textContent = `Genres: ${film.genres}`;
       elText.textContent = `Weaknesses: ${film.overview
         .split(" ")
         .slice(0, 15)
         .join(" ")}`;
-      elText2.textContent = formatDate(film.release_date);
 
-      elItem.setAttribute("class", "text-danger card col-3 bg-info p-0");
+      elItem.setAttribute("class", " card col-4 bg-info p-0 m-2");
 
-      elText2.setAttribute("class", " card-text");
       elText.setAttribute("class", " card-text");
-      elImg.setAttribute("class", " bg-white card-img-top ");
+      elImg.setAttribute("class", " bg-white card-img-top card__img");
       elTitle.setAttribute("class", "card-title");
-      elBody.setAttribute("class", "card-body text-center ");
+      elBody.setAttribute("class", "card-body  title__body");
+      elBtn.setAttribute("class", "btn btn-danger list__btn");
+      elBtn.href = "#";
+      elBtn.textContent = "Bookmark";
+      elBtnDiv.setAttribute("class", "text-end ");
+      elBtn.dataset.filmId = film.id;
 
-      // elTwoBody.appendChild(elText2);
+      elBtnDiv.appendChild(elBtn);
+
       elBody.appendChild(elTitle);
       elBody.appendChild(elText);
-      elBody.appendChild(elText2);
-
-      elBody.appendChild(elTextGenres);
+      elBody.appendChild(elBtnDiv);
 
       elItem.appendChild(elImg);
       elItem.appendChild(elBody);
-      // elItem.appendChild(elTwoBody);
 
       element.appendChild(elItem);
     }
   }
 };
-// renderFilms(films, elList);
+renderFilms(films, elList);
 elForm.addEventListener("submit", (e) => {
   e.preventDefault();
   elList.textContent = "";
-  console.log(elSelect.value);
   if (elSelect.value == "All") {
     renderFilms(films, elList);
   } else {
     renderFilms2(films, elList, elSelect.value);
   }
 });
+
+elList.addEventListener("click", (e) => {
+  if (e.target.matches(".list__btn")) {
+    const btnId = e.target.dataset.filmId;
+    const findElement = films.find((film) => film.id == btnId);
+    // console.log(findElement);
+
+    if (!bookmarkArr.includes(findElement)) {
+      bookmarkArr.push(findElement);
+    }
+
+    // if(bookmarkArr.length > 0){
+    //   for (let item of bookmarkArr) {
+    //     if (item.id != findElement.id) {
+    //       bookmarkArr.push(findElement);
+    //     }
+    //   }
+    // }else{
+    //   bookmarkArr.push(findElement)
+    // }
+
+    renderTitle(bookmarkArr, elListTitle);
+  }
+});
+elListTitle.addEventListener("click", (e) => {
+  console.log("ishladi");
+  if (e.target.matches(".btn-danger")) {
+    const btnId = e.target.dataset.filmId;
+    const findElement = bookmarkArr.findIndex((film) => film.id == btnId);
+    bookmarkArr.splice(findElement, 1);
+    renderTitle(bookmarkArr, elListTitle);
+  }
+});
+
+const renderTitle = (arr, element) => {
+  element.innerHTML = "";
+  arr.forEach((elem) => {
+    const newItem = document.createElement("li");
+    const newBtn = document.createElement("button");
+
+
+    newItem.textContent = elem.title;
+    newItem.setAttribute("class", "list-group-item list__item");
+
+    newBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+
+    newBtn.setAttribute("class", "btn btn-danger me-3");
+    newBtn.dataset.filmId = elem.id;
+
+    newItem.prepend(newBtn);
+    element.appendChild(newItem);
+  });
+};
