@@ -119,15 +119,23 @@ let renderFilms2 = (arr, element, genre) => {
   }
 };
 renderFilms(films, elList);
-elForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+// elForm.addEventListener("submit", (e) => {
+//   e.preventDefault();
+//   elList.textContent = "";
+//   if (elSelect.value == "All") {
+//     renderFilms(films, elList);
+//   } else {
+//     renderFilms2(films, elList, elSelect.value);
+//   }
+// });
+elSelect.addEventListener("change", ()=>{
   elList.textContent = "";
   if (elSelect.value == "All") {
     renderFilms(films, elList);
   } else {
     renderFilms2(films, elList, elSelect.value);
   }
-});
+})
 
 elList.addEventListener("click", (e) => {
   if (e.target.matches(".list__btn")) {
